@@ -34,7 +34,7 @@ require("csv-to-array")({
         /**
          * Set timeout and Init nightmare
          */
-        var timeout = i * 5000;
+        var timeout = i * 6000;
         var nightmare = new Nightmare({ show: false });
         setTimeout(function(i){
             /**
