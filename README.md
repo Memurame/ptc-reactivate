@@ -1,4 +1,4 @@
-##Activate/-Reactivate your ptc-accounts
+##Request activation link
 
 1. Clone the repo ```git clone https://github.com/n30nl1ght/ptc-reactivate.git```
 
