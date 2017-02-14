@@ -1,25 +1,25 @@
 {
-  "name": "nintendo-ptc-account-reactivate",
-  "version": "1.0",
-  "description": "Reactivate PTC accounts.",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/n30nl1ght/ptc-reactivate.git"
-  },
-  "license": "MIT",
-  "keywords": [
-    "nintendo",
-    "ptc",
-    "pokemon",
-    "pokemongo",
-    "accounts",
-    "activation"
-  ],
-  "author": "n30l1ght",
+  "name": "ptc-reactivate",
+  "version": "1.0.0",
+  "description": "request for activate link from niantic",
+  "main": "activate.js",
   "dependencies": {
     "chalk": "^1.1.3",
     "csv-to-array": "^1.0.2",
     "nightmare": "^2.6.0"
-  }
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/n30nl1ght/ptc-reactivate.git"
+  },
+  "author": "Thomas Hirter <t.hirter@outlook.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/n30nl1ght/ptc-reactivate/issues"
+  },
+  "homepage": "https://github.com/n30nl1ght/ptc-reactivate#readme"
 }
