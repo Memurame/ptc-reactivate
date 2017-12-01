@@ -2,22 +2,18 @@ var Nightmare = require('nightmare');
 var fs = require('fs');
 var chalk = require('chalk');
 var request = require('request');
+var MongoClient = require('mongodb').MongoClient;
+var url = "mongodb://localhost:27017/accGen";
+var config = require('./config');
 
 
 var showWindow = true;
-var start = 1;
-var end = 100;
 var username = 'habakuk';
-var email_user = 'habakuk';
-var email_domain = 'sanktuario.ch';
-var useAutoCatcha = true;
-var captchaApiKey = 'API_KEY_FOR_2CAPTCHA';
 var debug = true;
 
 
-if (useAutoCatcha)
+if (config.useAutoCatcha)
     showWindow = false;
-
 
 var outputFile = "accounts.csv";
 var outputFormat = "ptc,%NICK%,%PASS%,%UN%\r\n";
@@ -30,22 +26,11 @@ var nightmare_opts = {
     loadTimeout: 5000
 };
 
-// Settings check
-if ((username + end).length > 16) {
-    console.log("Error: Username zu lang.");
-    process.exit();
-}
-
-if ((email_user + '+' + username + end + '@' + email_domain).length > 75) {
-    console.log("E-Mail adresse zu lang.");
-    process.exit();
-}
-
 
 var nightmare = Nightmare(nightmare_opts);
 nightmare.useragent("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36");
 
-createAccount(start);
+createAccount(config.start);
 
 function handleError(err) {
     if (debug) {
@@ -80,7 +65,7 @@ function randomPassword() {
  * @param ctr
  */
 function createAccount(ctr) {
-    console.log("Creating account " + ctr + " of " + end);
+    console.log("Creating account " + ctr + " of " + config.end);
 
     handleFirstPage(ctr);
 }
@@ -142,11 +127,12 @@ function fillFirstPage(ctr) {
 
         return document.getElementById("id_dob").value;
     }, {
-        country: 'FR'
+        country: 'DE'
     })
         .click("form[name='verify-age'] [type=submit]")
         .wait("#id_username")
         .then(function() {
+            console.log('GoTo SignUp');
             handleSignupPage(ctr);
         })
         .catch(handleError)
@@ -154,6 +140,7 @@ function fillFirstPage(ctr) {
             if (typeof err !== "undefined") {
                 return handleFirstPage(ctr);
             }
+            console.log('Catch');
         });
 }
 
@@ -201,9 +188,9 @@ function fillSignupPage(ctr) {
     }
 
     var _pass = randomPassword();
-    var _nick = username + ctr;
+    var _nick = config.username + ctr;
 
-    if (useAutoCatcha) {
+    if (config.useAutoCatcha) {
         nightmare.evaluate(function(data) {
             document.getElementById("id_password").value = data.pass;
             document.getElementById("id_confirm_password").value = data.pass;
@@ -215,8 +202,8 @@ function fillSignupPage(ctr) {
         }, {
             "pass": _pass,
             "nick": _nick,
-            "email_user": email_user,
-            "email_domain": email_domain
+            "email_user": config.email_user,
+            "email_domain": config.email_domain
         })
             .check("#id_terms");
 
@@ -226,13 +213,13 @@ function fillSignupPage(ctr) {
         }).then(function(result) {
             console.log("Start recaptcha solving");
 
-            request('http://2captcha.com/in.php?key=' + captchaApiKey + '&method=userrecaptcha&googlekey=' + result + '&pageurl=club.pokemon.com', function(error, response, body) {
+            request('http://2captcha.com/in.php?key=' + config.captchaApiKey + '&method=userrecaptcha&googlekey=' + result + '&pageurl=club.pokemon.com', function(error, response, body) {
                 if (error) throw error;
 
                 console.log("Checking status of captcha id: " + body.substring(3));
 
                 var checkCaptcha = function() {
-                    request('http://2captcha.com/res.php?key=' + captchaApiKey + '&action=get&id=' + body.substring(3), function(error, response, body) {
+                    request('http://2captcha.com/res.php?key=' + config.captchaApiKey + '&action=get&id=' + body.substring(3), function(error, response, body) {
                         if (error) throw error;
 
                         if (body.substring(0, 2) == "OK") {
@@ -262,7 +249,7 @@ function fillSignupPage(ctr) {
                                             }
 
                                             // Next one, or stop
-                                            if (ctr < end) {
+                                            if (ctr < config.end) {
                                                 return function() {
                                                     createAccount(ctr + 1);
                                                 };
@@ -299,8 +286,8 @@ function fillSignupPage(ctr) {
         }, {
             "pass": _pass,
             "nick": _nick,
-            "email_user": email_user,
-            "email_domain": email_domain
+            "email_user": config.email_user,
+            "email_domain": config.email_domain
         })
             .check("#id_terms")
             .wait(function() {
@@ -321,7 +308,7 @@ function fillSignupPage(ctr) {
                 }
 
                 // Next one, or stop
-                if (ctr < end) {
+                if (ctr < config.end) {
                     return function() {
                         createAccount(ctr + 1);
                     };

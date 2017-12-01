@@ -1,0 +1,9 @@
+exports.useAutoCatcha = true;
+exports.captchaApiKey = 'APIKEY;
+
+exports.username = 'username';
+exports.email_user = 'user';
+exports.email_domain = 'domain.ch';
+
+exports.start = 1;
+exports. end = 100;
